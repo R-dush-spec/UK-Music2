@@ -532,7 +532,7 @@ class Bubble { //535
     const d = dist(mx, my, screenX, screenY);
     return d < (this.size * depthScale) / 2;
   }
-} /388
+} //388
 
 class MiniBubble { //571
   constructor(s, t) {
