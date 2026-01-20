@@ -184,6 +184,14 @@ if (bgmHub)  bgmHub.setVolume(0.6);
   exitCY = height + exitR * 0.15;
 textFont('monospace');
 
+  debugDiv = createDiv("DIV OK");
+debugDiv.style("position", "fixed");
+debugDiv.style("left", "20px");
+debugDiv.style("top", "20px");
+debugDiv.style("color", "white");
+debugDiv.style("font-size", "24px");
+debugDiv.style("z-index", "9999");
+
   // NOTE: BGMはブラウザの制約で「setup時に自動再生」できないことが多いので、
   // 実際のloop開始は最初のタップ（mousePressed）側で行う。
 } //139
