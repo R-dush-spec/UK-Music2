@@ -964,29 +964,55 @@ function drawMessageScreen() {
 // そのまま関数としてJSに移せばOKです（記法だけJava→JSに直す）。
 
 function drawZoomedBubble() {
-  // TODO: あなたのProcessing版を移植
-  // 例：selectedBubble.drawSoapBubbleSphere(...) はそのまま呼べる
-  fill(0, 200);
-  noStroke();
-  rect(0, 0, width, height);
+  // ここは displayMode==1 の画面。必ず何か描く。
+  // WEBGL座標が崩れても描けるように、毎回リセットして2D化する
+  resetMatrix();
+  translate(-width / 2, -height / 2);
+  blendMode(BLEND);
+  noTint();
+
+  // 背景
+  background(8, 10, 18);
+  drawScanlines(10);
   hudCorners(18, 120);
+
+  // 安全確認：選択バブルが無いならメッセージを出して戻す
+  if (!selectedBubble) {
+    fill(255);
+    noStroke();
+    textAlign(CENTER, CENTER);
+    textSize(18);
+    text("ERROR: selectedBubble is null", width / 2, height / 2);
+    // Hubへ戻す（無限ループ防止）
+    displayMode = 0;
+    return;
+  }
+
+  // ここから “拡大中” の表現（とりあえず中央に円を出す）
+  const t = easeInOutCubic(constrain(zoomProgress, 0, 1));
+  const r = lerp(60, min(width, height) * 0.28, t);
+
+  // ほんのり光る円（2D）
+  blendMode(ADD);
+  noStroke();
+  fill(120, 240, 255, 40);
+  circle(width / 2, height / 2, r * 2.2);
+  fill(255, 80, 220, 18);
+  circle(width / 2, height / 2, r * 2.6);
+  blendMode(BLEND);
+
+  // タイトル文字（まずはネオンじゃなく “普通のtext” で出す）
+  fill(255);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(26);
+  text("BUBBLE SELECT", width / 2, 80);
+
+  textSize(16);
+  fill(200, 220, 255);
+  text("Tap again to go back", width / 2, height - 60);
 }
 
-function drawMusicDetail() {
-  // TODO: あなたのProcessing版を移植
-  fill(0, 200);
-  noStroke();
-  rect(0, 0, width, height);
-  hudCorners(18, 120);
-}
-
-function drawPhonePrompt() {
-  // TODO: あなたのProcessing版を移植
-  fill(0, 200);
-  noStroke();
-  rect(0, 0, width, height);
-  hudCorners(18, 120);
-}
 
 // =====================================================
 // Phone helper
