@@ -6,7 +6,7 @@
 // ---------------------
 // Globals
 // ---------------------
-
+let hud2d;
 // --- Sound ---
 let seTap, seYes, seNo, seWarp, seBubble, seRecord, seImport, seGot, seBack;
 let bgmIdle, bgmHub;
@@ -198,6 +198,13 @@ debugDiv.style("z-index", "9999");
 textSize(24);
 textAlign(LEFT, TOP);
 fill(255);
+
+  hud2d = createGraphics(windowWidth, windowHeight);
+hud2d.pixelDensity(1);
+hud2d.textFont('Noto Sans JP');
+hud2d.textSize(24);
+hud2d.textAlign(LEFT, TOP);
+
 } //139
 
 function draw() { //274
@@ -317,7 +324,31 @@ textAlign(LEFT, TOP);
 textSize(24);
 text("TEXT OK", 20, 20);
 
+  hud2d.clear();
+hud2d.noStroke();
+hud2d.fill(255);
+hud2d.text("HUD TEXT OK", 20, 20);
+
+// WEBGLキャンバスに2Dレイヤーを貼り付け
+push();
+resetMatrix();
+translate(-width/2, -height/2);
+image(hud2d, 0, 0);
+pop();
+
 return;
+
+  hud2d.clear();
+hud2d.noStroke();
+hud2d.fill(255);
+hud2d.text("HUD TEXT OK", 20, 20);
+
+// WEBGLキャンバスに2Dレイヤーを貼り付け
+push();
+resetMatrix();
+translate(-width/2, -height/2);
+image(hud2d, 0, 0);
+pop();
 
 } //187
 
@@ -1272,5 +1303,11 @@ function windowResized() {
 
   // ECGを作り直す（width依存）
   generateECG();
+ hud2d = createGraphics(windowWidth, windowHeight);
+hud2d.pixelDensity(1);
+hud2d.textFont('Noto Sans JP');
+hud2d.textSize(24);
+hud2d.textAlign(LEFT, TOP);
+
 }
 console.log("EOF reached");
