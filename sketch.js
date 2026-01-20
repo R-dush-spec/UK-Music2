@@ -189,6 +189,15 @@ function draw() { //274
   uiTime += 0.016;
 
   background(0);
+push();
+translate(-width/2, -height/2);
+blendMode(BLEND);
+fill(255);
+noStroke();
+textSize(20);
+textAlign(LEFT, TOP);
+text("DEBUG TEXT", 20, 20);
+pop();
 
   push();
   translate(-width/2, -height/2);
