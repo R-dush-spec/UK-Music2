@@ -1061,7 +1061,7 @@ function handlePress(mx, my) {
     lastMY = my;
     camVelX = 0;
     camVelY = 0;
-  }
+  
 }
 
 function mouseDragged() {
