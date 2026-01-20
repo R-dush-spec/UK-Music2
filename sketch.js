@@ -502,8 +502,11 @@ class Bubble { //535
     const depthScale = map(this.z, -1500, 500, 0.3, 1.2);
     let detail = floor(map(depthScale, 0.3, 1.2, 12, 32));
     detail = constrain(detail, 10, 34);
-    sphereDetail(detail);
-    sphere(r);
+    // Safari対策：sphereDetail が無い環境がある
+if (typeof sphereDetail === "function") {
+  sphereDetail(detail);
+}
+sphere(r);
 
     // rim (2Dっぽい円を重ねる：WEBGLだと円は板なので、雰囲気優先)
     push();
