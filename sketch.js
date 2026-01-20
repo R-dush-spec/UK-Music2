@@ -93,28 +93,28 @@ function preload() {
   ];
 
   // SE
-  seTap    = loadSound("assets/se_tap.mp3");
-  seYes    = loadSound("assets/se_yes.mp3");
-  seNo     = loadSound("assets/se_no.mp3");
-  seWarp   = loadSound("assets/se_warp.mp3");
-  seBubble = loadSound("assets/se_bubble.mp3");
-  seRecord = loadSound("assets/se_record.mp3");
-  seImport = loadSound("assets/se_import.mp3");
-  seGot    = loadSound("assets/se_got.mp3");
-  seBack   = loadSound("assets/se_back.mp3");
+  //seTap    = loadSound("assets/se_tap.mp3");
+  //seYes    = loadSound("assets/se_yes.mp3");
+  //seNo     = loadSound("assets/se_no.mp3");
+  //seWarp   = loadSound("assets/se_warp.mp3");
+  //seBubble = loadSound("assets/se_bubble.mp3");
+  //seRecord = loadSound("assets/se_record.mp3");
+  //seImport = loadSound("assets/se_import.mp3");
+  //seGot    = loadSound("assets/se_got.mp3");
+  //seBack   = loadSound("assets/se_back.mp3");
 
   // BGM
-  bgmIdle = loadSound("assets/bgm_idle.mp3");
-  bgmHub  = loadSound("assets/bgm_hub.mp3");
+  //bgmIdle = loadSound("assets/bgm_idle.mp3");
+  //bgmHub  = loadSound("assets/bgm_hub.mp3");
 
   // music 6
   musicMap = new Map();
-  musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
-  musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
-  musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
-  musicMap.set("Neon Lights",     loadSound("assets/neon.mp3"));
-  musicMap.set("Ocean Waves",     loadSound("assets/ocean.mp3"));
-  musicMap.set("City Pulse",      loadSound("assets/city.mp3"));
+  //musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
+  //musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
+ // musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
+  //musicMap.set("Neon Lights",     loadSound("assets/neon.mp3"));
+  //musicMap.set("Ocean Waves",     loadSound("assets/ocean.mp3"));
+  //musicMap.set("City Pulse",      loadSound("assets/city.mp3"));
 }
 
 function setup() {
