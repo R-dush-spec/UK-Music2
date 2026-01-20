@@ -12,6 +12,9 @@ let seTap, seYes, seNo, seWarp, seBubble, seRecord, seImport, seGot, seBack;
 let bgmIdle, bgmHub;
 let musicMap;          // Map<string, p5.SoundFile>
 let currentMusic = null;
+let bgmIdlePath = "assets/bgm_idle.mp3";
+let bgmHubPath  = "assets/bgm_hub.mp3";
+
 
 let bubbles = [];
 let avatarImages = [];
@@ -104,7 +107,21 @@ function preload() {
   seBack   = loadSound("assets/se_back.mp3");
 
 
-  // ---------------------
+  // BGM
+// let bgmIdlePath = "assets/bgm_idle.mp3";
+//let bgmHubPath  = "assets/bgm_hub.mp3";
+
+  // music 6
+  musicMap = new Map();
+  musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
+  musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
+ musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
+  musicMap.set("Neon Lights",     loadSound("assets/neon.mp3"));
+  musicMap.set("Ocean Waves",     loadSound("assets/ocean.mp3"));
+  musicMap.set("City Pulse",      loadSound("assets/city.mp3"));
+
+
+    // ---------------------
 // Sound helpers
 // ---------------------
 
@@ -117,18 +134,17 @@ function safeLoadSound(path) {
     }
   );
 }
-  // BGM
- // bgmIdle = loadSound("assets/bgm_idle.mp3");
-  //bgmHub  = loadSound("assets/bgm_hub.mp3");
 
-  // music 6
-  musicMap = new Map();
-  musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
-  musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
- musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
-  musicMap.set("Neon Lights",     loadSound("assets/neon.mp3"));
-  musicMap.set("Ocean Waves",     loadSound("assets/ocean.mp3"));
-  musicMap.set("City Pulse",      loadSound("assets/city.mp3"));
+  function ensureBGMLoaded() {
+  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
+  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
+}
+
+}
+
+function ensureBGMLoaded() {
+  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
+  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
 }
 
 function setup() {
@@ -287,7 +303,7 @@ function playMusicByTitle(title) {
 function switchBGM(bgm) {
   if (bgmIdle && bgmIdle.isPlaying()) bgmIdle.stop();
   if (bgmHub && bgmHub.isPlaying()) bgmHub.stop();
-  if (bgm) bgm.loop();
+  if (bgm && (!bgm.isLoaded || bgm.isLoaded())) bgm.loop();
 }
 
 // =====================================================
@@ -959,7 +975,8 @@ function easeInOutCubic(t) {
 function mousePressed() {
   // ブラウザ音声解放（最重要）
   userStartAudio();
-
+ensureBGMLoaded(); // ← 追加
+  
   // 最初のBGM開始を「最初のタップ」で行うと確実
   if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying()) {
     bgmIdle.loop();
@@ -972,6 +989,8 @@ function mousePressed() {
 function touchStarted() {
   // スマホでも同じ動作にする
   userStartAudio();
+ensureBGMLoaded(); // ← 追加
+  
   if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying()) bgmIdle.loop();
 
   const t = touches[0] || { x: mouseX, y: mouseY };
