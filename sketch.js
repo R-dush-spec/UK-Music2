@@ -87,7 +87,7 @@ let uiTime = 0;
 // ---------------------
 // Assets preload
 // ---------------------
-function preload() {
+function preload() { //137
   // images
   avatarImages = [
     loadImage("assets/avatar1.png"),
@@ -134,9 +134,9 @@ function safeLoadSound(path) {
     }
   );
 }
+} //90
 
-
-function setup() {
+function setup() { //185
   createCanvas(windowWidth, windowHeight, WEBGL);
   pixelDensity(1);
 
@@ -182,9 +182,9 @@ function setup() {
 
   // NOTE: BGMはブラウザの制約で「setup時に自動再生」できないことが多いので、
   // 実際のloop開始は最初のタップ（mousePressed）側で行う。
-}
+} //139
 
-function draw() {
+function draw() { //274
   uiTime += 0.016;
 
   background(0);
@@ -222,7 +222,7 @@ function draw() {
     musicDetailProgress = max(0, musicDetailProgress - 0.1);
     phonePromptProgress = max(0, phonePromptProgress - 0.1);
     drawZoomedBubble();
-  } else {
+  } else { //266
     // Hub
     updateCameraPan();
 
@@ -263,7 +263,7 @@ function draw() {
     pop();
 
     return;
-  }
+  } //225
 
   // 2DのままHUD
   pop();
@@ -271,7 +271,7 @@ function draw() {
   translate(-width / 2, -height / 2);
   // （各画面内でhudCornersしてるならここ不要）
   pop();
-}
+} //187
 
 // =====================================================
 // Sound helpers
@@ -385,7 +385,7 @@ class MusicRecord {
   }
 }
 
-class Bubble {
+class Bubble { //535
   constructor(x, y, z, s, interactive) {
     this.pos = createVector(x, y);
     this.z = z;
@@ -532,9 +532,9 @@ class Bubble {
     const d = dist(mx, my, screenX, screenY);
     return d < (this.size * depthScale) / 2;
   }
-}
+} /388
 
-class MiniBubble {
+class MiniBubble { //571
   constructor(s, t) {
     this.start = s.copy();
     this.target = t.copy();
@@ -568,12 +568,12 @@ class MiniBubble {
     strokeWeight(2);
     circle(p.x, p.y, r * 1.15);
   }
-}
+} //537
 
 // =====================================================
 // ECG generation
 // =====================================================
-function generateECG() {
+function generateECG() {  //612
   ecgPoints = [];
 
   const micLevel01 = 0.0;
@@ -609,7 +609,7 @@ function generateECG() {
 
     ecgPoints.push(createVector(i, y));
   }
-}
+}　//576
 
 // =====================================================
 // Lighting
@@ -991,7 +991,7 @@ ensureBGMLoaded(); // ← 追加
   return false;
 }
 
-function handlePress(mx, my) {
+function handlePress(mx, my) {  //1065とペア
   // あなたのProcessing mousePressedをほぼそのまま移植（mx/myを使う）
   if (displayMode === -2) {
     if (seTap) seTap.play();
