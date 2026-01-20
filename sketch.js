@@ -118,8 +118,8 @@ function safeLoadSound(path) {
   );
 }
   // BGM
-  bgmIdle = loadSound("assets/bgm_idle.mp3");
-  bgmHub  = loadSound("assets/bgm_hub.mp3");
+ // bgmIdle = loadSound("assets/bgm_idle.mp3");
+  //bgmHub  = loadSound("assets/bgm_hub.mp3");
 
   // music 6
   musicMap = new Map();
