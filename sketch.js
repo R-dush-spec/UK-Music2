@@ -774,20 +774,25 @@ function neonRect(x, y, w, h, r, c, a) {
 }
 
 function neonText(s, x, y, sz, c, a) {
-  textAlign(CENTER, CENTER);
-  textSize(sz);
+  if (!hud2d) return;
 
-  blendMode(ADD);
-  fill(red(c), green(c), blue(c), a * 0.30);
-  text(s, x, y);
-  fill(red(c), green(c), blue(c), a * 0.20);
-  text(s, x + 1, y);
-  text(s, x - 1, y);
-  blendMode(BLEND);
+  hud2d.push();
+  hud2d.textAlign(CENTER, CENTER);
+  hud2d.textSize(sz);
 
-  fill(255, a);
-  text(s, x, y);
+  // glow
+  hud2d.fill(red(c), green(c), blue(c), a * 0.30);
+  hud2d.text(s, x, y);
+  hud2d.fill(red(c), green(c), blue(c), a * 0.20);
+  hud2d.text(s, x + 1, y);
+  hud2d.text(s, x - 1, y);
+
+  // main
+  hud2d.fill(255, a);
+  hud2d.text(s, x, y);
+  hud2d.pop();
 }
+
 
 function hudCorners(pad, a) {
   stroke(120, 240, 255, a);
