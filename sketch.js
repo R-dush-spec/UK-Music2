@@ -103,6 +103,20 @@ function preload() {
   seGot    = loadSound("assets/se_got.mp3");
   seBack   = loadSound("assets/se_back.mp3");
 
+
+  // ---------------------
+// Sound helpers
+// ---------------------
+
+function safeLoadSound(path) {
+  return loadSound(
+    path,
+    () => console.log("OK:", path),
+    (e) => {
+      console.warn("NG:", path, e);
+    }
+  );
+}
   // BGM
   bgmIdle = loadSound("assets/bgm_idle.mp3");
   bgmHub  = loadSound("assets/bgm_hub.mp3");
