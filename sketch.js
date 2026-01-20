@@ -170,6 +170,15 @@ function draw() {
 
   background(0);
 
+  // まず「動いているか」確認するためのデバッグ表示
+  push();
+  translate(-width/2, -height/2);
+  noStroke();
+  fill(255);
+  textSize(16);
+  text("debug: draw running " + frameCount, 20, 30);
+  pop();
+  
   // ----- 2D座標系へ：WEBGLは原点が中央なので左上起点にする -----
   push();
   translate(-width / 2, -height / 2);
