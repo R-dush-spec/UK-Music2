@@ -647,6 +647,23 @@ function setupBubbleLights() {
 // =====================================================
 // HUD helpers (2D)
 // =====================================================
+function drawDebugTextTopLeft(msg) {
+  push();
+  // WEBGL -> 画面左上座標系へ
+  resetMatrix();
+  // p5.js WEBGL の screen-space は (0,0) が中央なので左上へずらす
+  translate(-width / 2, -height / 2);
+
+  blendMode(BLEND);
+  noStroke();
+  fill(255);
+  textAlign(LEFT, TOP);
+  textSize(18);
+  text(msg, 20, 20);
+  pop();
+}
+
+
 function drawScanlines(a) {
   stroke(255, a);
   strokeWeight(1);
