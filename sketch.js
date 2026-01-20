@@ -301,14 +301,14 @@ function switchBGM(bgm) {
     bgmIdle = loadSound(bgmIdlePath, () => {
       bgmIdle.setVolume(0.4);
       console.log("bgmIdle loaded");
-    });
+    }, (e) => console.warn("bgmIdle load failed", e));
   }
 
   if (!bgmHub) {
     bgmHub = loadSound(bgmHubPath, () => {
       bgmHub.setVolume(0.6);
       console.log("bgmHub loaded");
-    });
+    }, (e) => console.warn("bgmHub load failed", e));
   }
 }
 // =====================================================
