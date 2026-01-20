@@ -180,6 +180,7 @@ if (bgmHub)  bgmHub.setVolume(0.6);
   exitR = min(width, height) * 0.14;
   exitCX = width + exitR * 0.15;
   exitCY = height + exitR * 0.15;
+textFont('monospace');
 
   // NOTE: BGMはブラウザの制約で「setup時に自動再生」できないことが多いので、
   // 実際のloop開始は最初のタップ（mousePressed）側で行う。
@@ -271,6 +272,15 @@ pop();
     drawCompassHint();
     drawExitButton();
     pop();
+    
+resetMatrix();
+translate(-width / 2, -height / 2);
+blendMode(BLEND);
+noStroke();
+fill(255);
+textAlign(LEFT, TOP);
+textSize(24);
+text("TEXT OK", 20, 20);
 
     return;
   } //225
@@ -283,6 +293,16 @@ pop();
   pop();
 
   drawDebugTextTopLeft("DEBUG TEXT");
+  
+  resetMatrix();
+translate(-width / 2, -height / 2);
+blendMode(BLEND);
+noStroke();
+fill(255);
+textAlign(LEFT, TOP);
+textSize(24);
+text("TEXT OK", 20, 20);
+
 return;
 
 } //187
