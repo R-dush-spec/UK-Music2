@@ -281,6 +281,10 @@ pop();
   translate(-width / 2, -height / 2);
   // （各画面内でhudCornersしてるならここ不要）
   pop();
+
+  drawDebugTextTopLeft("DEBUG TEXT");
+return;
+
 } //187
 
 // =====================================================
