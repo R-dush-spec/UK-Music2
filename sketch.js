@@ -108,7 +108,7 @@ function preload() {
   //bgmHub  = loadSound("assets/bgm_hub.mp3");
 
   // music 6
-  musicMap = new Map();
+  //musicMap = new Map();
   //musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
   //musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
  // musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
