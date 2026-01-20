@@ -1147,3 +1147,4 @@ function windowResized() {
   // ECGを作り直す（width依存）
   generateECG();
 }
+}
