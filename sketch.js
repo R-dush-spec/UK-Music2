@@ -306,14 +306,28 @@ function playMusicByTitle(title) {
 function switchBGM(bgm) {
   if (bgmIdle && bgmIdle.isPlaying()) bgmIdle.stop();
   if (bgmHub && bgmHub.isPlaying()) bgmHub.stop();
-  if (bgm && (!bgm.isLoaded || bgm.isLoaded())) bgm.loop();
+
+  if (!bgm) return;
+
+  // ロード完了している時だけ再生
+  if (bgm.isLoaded && bgm.isLoaded()) {
+    bgm.loop();
+  } else {
+    console.log("BGM not loaded yet, will start after load");
+    // ここでは何もしない（ロード完了コールバック側で鳴らす）
+  }
 }
 
- function ensureBGMLoaded() {
+function ensureBGMLoaded() {
   if (!bgmIdle) {
     bgmIdle = loadSound(bgmIdlePath, () => {
       bgmIdle.setVolume(0.4);
       console.log("bgmIdle loaded");
+
+      // もし開始画面(-2)にいるなら、ここで鳴らす
+      if (displayMode === -2 && (!bgmIdle.isPlaying())) {
+        bgmIdle.loop();
+      }
     }, (e) => console.warn("bgmIdle load failed", e));
   }
 
@@ -324,6 +338,7 @@ function switchBGM(bgm) {
     }, (e) => console.warn("bgmHub load failed", e));
   }
 }
+
 // =====================================================
 // Classes
 // =====================================================
@@ -1016,9 +1031,7 @@ function mousePressed() {
 ensureBGMLoaded(); // ← 追加
   
   // 最初のBGM開始を「最初のタップ」で行うと確実
-  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying()) {
-    bgmIdle.loop();
-  }
+  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying());
 
   handlePress(mouseX, mouseY);
   return false;
@@ -1029,7 +1042,7 @@ function touchStarted() {
   userStartAudio();
 ensureBGMLoaded(); // ← 追加
   
-  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying()) bgmIdle.loop();
+  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying());
 
   const t = touches[0] || { x: mouseX, y: mouseY };
   handlePress(t.x, t.y);
