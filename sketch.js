@@ -140,9 +140,10 @@ function setup() { //185
   createCanvas(windowWidth, windowHeight, WEBGL);
   pixelDensity(1);
 
-  // volumes
-  bgmIdle.setVolume(0.4);
-  bgmHub.setVolume(0.6);
+  // volumes(BGMはタップ後に読み込むので、ここでは未ロードの可能性あり)
+if (bgmIdle) bgmIdle.setVolume(0.4);
+if (bgmHub)  bgmHub.setVolume(0.6);
+  
 
   // ECG
   generateECG();
@@ -295,9 +296,20 @@ function switchBGM(bgm) {
   if (bgm && (!bgm.isLoaded || bgm.isLoaded())) bgm.loop();
 }
 
-  function ensureBGMLoaded() {
-  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
-  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
+ function ensureBGMLoaded() {
+  if (!bgmIdle) {
+    bgmIdle = loadSound(bgmIdlePath, () => {
+      bgmIdle.setVolume(0.4);
+      console.log("bgmIdle loaded");
+    });
+  }
+
+  if (!bgmHub) {
+    bgmHub = loadSound(bgmHubPath, () => {
+      bgmHub.setVolume(0.6);
+      console.log("bgmHub loaded");
+    });
+  }
 }
 // =====================================================
 // Classes
