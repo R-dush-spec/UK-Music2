@@ -26,6 +26,8 @@ let selectedRecord = null;
 let musicDetailProgress = 0;
 
 let phonePromptProgress = 0;
+let debugDiv;
+
 
 // Display modes
 // -2: ECG (first)
