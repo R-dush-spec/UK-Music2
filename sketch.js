@@ -135,17 +135,6 @@ function safeLoadSound(path) {
   );
 }
 
-  function ensureBGMLoaded() {
-  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
-  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
-}
-
-}
-
-function ensureBGMLoaded() {
-  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
-  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
-}
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -306,6 +295,10 @@ function switchBGM(bgm) {
   if (bgm && (!bgm.isLoaded || bgm.isLoaded())) bgm.loop();
 }
 
+  function ensureBGMLoaded() {
+  if (!bgmIdle) bgmIdle = loadSound(bgmIdlePath);
+  if (!bgmHub)  bgmHub  = loadSound(bgmHubPath);
+}
 // =====================================================
 // Classes
 // =====================================================
