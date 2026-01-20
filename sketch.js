@@ -194,6 +194,10 @@ debugDiv.style("z-index", "9999");
 
   // NOTE: BGMはブラウザの制約で「setup時に自動再生」できないことが多いので、
   // 実際のloop開始は最初のタップ（mousePressed）側で行う。
+  textFont('Noto Sans JP');
+textSize(24);
+textAlign(LEFT, TOP);
+fill(255);
 } //139
 
 function draw() { //274
