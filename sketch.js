@@ -1043,7 +1043,8 @@ function handlePress(mx, my) {
       exitToStart();
       return;
     }
-
+  }
+  
     for (const b of bubbles) {
       if (b.isClicked(mx, my)) {
         if (seBubble) seBubble.play();
