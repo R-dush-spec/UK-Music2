@@ -1129,6 +1129,14 @@ function handlePress(mx, my) {  //1065とペア
     }
   }
   
+  if (displayMode === 1) {
+  // もう一回タップでHubに戻す（まずはデバッグ用）
+  displayMode = 0;
+  zoomProgress = 0;
+  selectedBubble = null;
+  return;
+}
+
     for (const b of bubbles) {
       if (b.isClicked(mx, my)) {
         if (seBubble) seBubble.play();
