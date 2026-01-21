@@ -229,10 +229,10 @@ function draw() {
     drawMessageScreen();
   } else if (displayMode === 3) {
     phonePromptProgress = min(1, phonePromptProgress + 0.03);
-    // drawPhonePrompt(); // あれば
+     drawPhonePrompt(); // あれば
   } else if (displayMode === 2) {
     musicDetailProgress = min(1, musicDetailProgress + 0.05);
-    // drawMusicDetail(); // あれば
+     drawMusicDetail(); // あれば
   } else if (displayMode === 1) {
     zoomProgress = min(1, zoomProgress + 0.05);
     drawZoomedBubble();
