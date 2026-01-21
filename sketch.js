@@ -1246,5 +1246,5 @@ hud2d.textFont('Noto Sans JP');
 hud2d.textSize(24);
 hud2d.textAlign(LEFT, TOP);
 
-}
+
 console.log("EOF reached");
