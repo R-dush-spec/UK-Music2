@@ -87,9 +87,19 @@ let exitPulse = 0;
 let uiTime = 0;
 
 // ---------------------
+// Sound helpers（preloadの外）
+// ---------------------
+function safeLoadSound(path) {
+  return loadSound(
+    path,
+    () => console.log("OK:", path),
+    (e) => console.warn("NG:", path, e)
+  );
+}
+// ---------------------
 // Assets preload
 // ---------------------
-function preload() { //137
+function preload() {
   // images
   avatarImages = [
     loadImage("assets/avatar1.png"),
@@ -97,46 +107,26 @@ function preload() { //137
     loadImage("assets/avatar3.png"),
   ];
 
-  // SE
-  seTap    = loadSound("assets/se_tap.mp3");
-  seYes    = loadSound("assets/se_yes.mp3");
-  seNo     = loadSound("assets/se_no.mp3");
-  seWarp   = loadSound("assets/se_warp.mp3");
-  seBubble = loadSound("assets/se_bubble.mp3");
-  seRecord = loadSound("assets/se_record.mp3");
-  seImport = loadSound("assets/se_import.mp3");
-  seGot    = loadSound("assets/se_got.mp3");
-  seBack   = loadSound("assets/se_back.mp3");
+  // SE（safeLoadSoundにしてログ取り）
+  seTap    = safeLoadSound("assets/se_tap.mp3");
+  seYes    = safeLoadSound("assets/se_yes.mp3");
+  seNo     = safeLoadSound("assets/se_no.mp3");
+  seWarp   = safeLoadSound("assets/se_warp.mp3");
+  seBubble = safeLoadSound("assets/se_bubble.mp3");
+  seRecord = safeLoadSound("assets/se_record.mp3");
+  seImport = safeLoadSound("assets/se_import.mp3");
+  seGot    = safeLoadSound("assets/se_got.mp3");
+  seBack   = safeLoadSound("assets/se_back.mp3");
 
-
-  // BGM
-// let bgmIdlePath = "assets/bgm_idle.mp3";
-//let bgmHubPath  = "assets/bgm_hub.mp3";
-
-  // music 6
+  // music
   musicMap = new Map();
-  musicMap.set("Midnight Dreams", loadSound("assets/midnight.mp3"));
-  musicMap.set("Summer Breeze",   loadSound("assets/summer.mp3"));
- musicMap.set("Electric Soul",   loadSound("assets/electric.mp3"));
-  musicMap.set("Neon Lights",     loadSound("assets/neon.mp3"));
-  musicMap.set("Ocean Waves",     loadSound("assets/ocean.mp3"));
-  musicMap.set("City Pulse",      loadSound("assets/city.mp3"));
-
-
-    // ---------------------
-// Sound helpers
-// ---------------------
-
-function safeLoadSound(path) {
-  return loadSound(
-    path,
-    () => console.log("OK:", path),
-    (e) => {
-      console.warn("NG:", path, e);
-    }
-  );
+  musicMap.set("Midnight Dreams", safeLoadSound("assets/midnight.mp3"));
+  musicMap.set("Summer Breeze",   safeLoadSound("assets/summer.mp3"));
+  musicMap.set("Electric Soul",   safeLoadSound("assets/electric.mp3"));
+  musicMap.set("Neon Lights",     safeLoadSound("assets/neon.mp3"));
+  musicMap.set("Ocean Waves",     safeLoadSound("assets/ocean.mp3"));
+  musicMap.set("City Pulse",      safeLoadSound("assets/city.mp3"));
 }
-} //90
 
 function setup() { //185
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -207,29 +197,24 @@ hud2d.textAlign(LEFT, TOP);
 
 } //139
 
-function draw() { //274
+function draw() {
   uiTime += 0.016;
-
   background(0);
-push();
-translate(-width/2, -height/2);
-blendMode(BLEND);
-fill(255);
-noStroke();
-textSize(20);
-textAlign(LEFT, TOP);
-text("DEBUG TEXT", 20, 20);
-pop();
 
-  push();
-  translate(-width/2, -height/2);
-  fill(255);
-  textSize(20);
-  text("DEBUG: draw running " + frameCount, 20, 40);
-  pop();
+  // まずHUD用バッファを毎フレームクリア
+  if (hud2d) {
+    hud2d.clear();
+    hud2d.noStroke();
+    hud2d.fill(255);
+    hud2d.textAlign(LEFT, TOP);
+    hud2d.textSize(24);
+    hud2d.text("HUD TEXT OK", 20, 20);
+    hud2d.textSize(16);
+    hud2d.text("mode=" + displayMode, 20, 50);
+  }
 
-  
-  // ----- 2D座標系へ：WEBGLは原点が中央なので左上起点にする -----
+  // ---------- 画面ごとの描画 ----------
+  // 2D系（左上原点）で描くブロック
   push();
   translate(-width / 2, -height / 2);
 
@@ -244,48 +229,41 @@ pop();
     drawMessageScreen();
   } else if (displayMode === 3) {
     phonePromptProgress = min(1, phonePromptProgress + 0.03);
-    drawPhonePrompt();
+    // drawPhonePrompt(); // あれば
   } else if (displayMode === 2) {
     musicDetailProgress = min(1, musicDetailProgress + 0.05);
-    phonePromptProgress = max(0, phonePromptProgress - 0.1);
-    drawMusicDetail();
+    // drawMusicDetail(); // あれば
   } else if (displayMode === 1) {
     zoomProgress = min(1, zoomProgress + 0.05);
-    musicDetailProgress = max(0, musicDetailProgress - 0.1);
-    phonePromptProgress = max(0, phonePromptProgress - 0.1);
     drawZoomedBubble();
-  } else { //266
-    // Hub
+  } else {
+    // Hubの2Dオーバーレイはここで描く
     updateCameraPan();
 
-    // parallax stars (2D)
     const parX = -camX * 0.15;
     const parY = -camY * 0.15;
     for (const s of stars) {
       s.update();
       s.display(parX, parY);
     }
+  }
 
-    // ---- 3D world ----
-    pop(); // 一旦2D解除してWEBGL座標で描く
+  pop(); // 2Dブロック終わり
+
+  // ---------- Hubの3D世界（displayMode===0 のときだけ） ----------
+  if (displayMode === 0) {
     push();
-
-    // world transform = window into a huge space
-    // 画面中心へ、そこからcam分だけ逆に動かす
     translate(-camX, -camY, 0);
 
-    // depth sort
     bubbles.sort((a, b) => a.z - b.z);
-
     setupBubbleLights();
     for (const b of bubbles) {
       b.update();
       b.display();
     }
-
     pop();
 
-    // HUDとアバターは2Dで上書き
+    // Hubの2D上書き
     push();
     translate(-width / 2, -height / 2);
     drawAvatarsOverlayNormal();
@@ -293,64 +271,20 @@ pop();
     drawCompassHint();
     drawExitButton();
     pop();
-    
-resetMatrix();
-translate(-width / 2, -height / 2);
-blendMode(BLEND);
-noStroke();
-fill(255);
-textAlign(LEFT, TOP);
-textSize(24);
-text("TEXT OK", 20, 20);
 
-    return;
-  } //225
+    if (hud2d) {
+      hud2d.text("HUB OK", 20, 80);
+    }
+  }
 
-  // 2DのままHUD
-  pop();
+  // ---------- 最後に必ずHUDバッファを貼る（ここが重要） ----------
   push();
-  translate(-width / 2, -height / 2);
-  // （各画面内でhudCornersしてるならここ不要）
-  pop();
-
-  drawDebugTextTopLeft("DEBUG TEXT");
-  
   resetMatrix();
-translate(-width / 2, -height / 2);
-blendMode(BLEND);
-noStroke();
-fill(255);
-textAlign(LEFT, TOP);
-textSize(24);
-text("TEXT OK", 20, 20);
+  translate(-width / 2, -height / 2);
+  image(hud2d, 0, 0);
+  pop();
+}
 
-  hud2d.clear();
-hud2d.noStroke();
-hud2d.fill(255);
-hud2d.text("HUD TEXT OK", 20, 20);
-
-// WEBGLキャンバスに2Dレイヤーを貼り付け
-push();
-resetMatrix();
-translate(-width/2, -height/2);
-image(hud2d, 0, 0);
-pop();
-
-return;
-
-  hud2d.clear();
-hud2d.noStroke();
-hud2d.fill(255);
-hud2d.text("HUD TEXT OK", 20, 20);
-
-// WEBGLキャンバスに2Dレイヤーを貼り付け
-push();
-resetMatrix();
-translate(-width/2, -height/2);
-image(hud2d, 0, 0);
-pop();
-
-} //187
 
 // =====================================================
 // Sound helpers
@@ -1122,31 +1056,24 @@ function easeInOutCubic(t) {
 // Input (Mouse + Touch)
 // =====================================================
 function mousePressed() {
-  // ブラウザ音声解放（最重要）
-  userStartAudio();
-ensureBGMLoaded(); // ← 追加
-  
-  // 最初のBGM開始を「最初のタップ」で行うと確実
-  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying());
+ userStartAudio();
+  ensureBGMLoaded();
 
   handlePress(mouseX, mouseY);
   return false;
 }
 
 function touchStarted() {
-  // スマホでも同じ動作にする
   userStartAudio();
-ensureBGMLoaded(); // ← 追加
-  
-  if (displayMode === -2 && bgmIdle && !bgmIdle.isPlaying());
+  ensureBGMLoaded();
 
   const t = touches[0] || { x: mouseX, y: mouseY };
   handlePress(t.x, t.y);
   return false;
 }
 
-function handlePress(mx, my) {  //1065とペア
-  // あなたのProcessing mousePressedをほぼそのまま移植（mx/myを使う）
+function handlePress(mx, my) {
+
   if (displayMode === -2) {
     if (seTap) seTap.play();
     if (bgmIdle && bgmIdle.isPlaying()) bgmIdle.stop();
@@ -1185,11 +1112,13 @@ function handlePress(mx, my) {  //1065とペア
     if (seWarp) seWarp.play();
     switchBGM(bgmHub);
     displayMode = 0;
-    introTimer = 0;
     return;
   }
 
+  // ここからHub（displayMode===0）だけ
   if (displayMode === 0) {
+
+    // EXIT
     if (hitExit(mx, my)) {
       if (seBack) seBack.play();
       stopCurrentMusic();
@@ -1197,34 +1126,37 @@ function handlePress(mx, my) {  //1065とペア
       exitToStart();
       return;
     }
-  }
-  
-  if (displayMode === 1) {
-  // もう一回タップでHubに戻す（まずはデバッグ用）
-  displayMode = 0;
-  zoomProgress = 0;
-  selectedBubble = null;
-  return;
-}
 
+    // バブルクリック
     for (const b of bubbles) {
       if (b.isClicked(mx, my)) {
         if (seBubble) seBubble.play();
         selectedBubble = b;
         displayMode = 1;
         zoomProgress = 0;
+        isPanning = false;
         return;
       }
     }
 
-    // start pan
+    // パン開始（何も当たらなかった時だけ）
     isPanning = true;
     lastMX = mx;
     lastMY = my;
     camVelX = 0;
     camVelY = 0;
-  
+    return;
+  }
+
+  // ズーム画面は「タップで戻る」だけ（まずはデバッグ用）
+  if (displayMode === 1) {
+    displayMode = 0;
+    zoomProgress = 0;
+    selectedBubble = null;
+    return;
+  }
 }
+
 
 function mouseDragged() {
   if (displayMode === 0 && isPanning) {
