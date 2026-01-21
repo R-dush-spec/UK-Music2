@@ -1164,7 +1164,37 @@ function handlePress(mx, my) {
       exitToStart();
       return;
     }
-// --------- mode 1/2/3 navigation（仮） ---------
+
+
+    // バブルクリック
+    for (const b of bubbles) {
+      if (b.isClicked(mx, my)) {
+        if (seBubble) seBubble.play();
+        selectedBubble = b;
+        displayMode = 1;
+        zoomProgress = 0;
+        isPanning = false;
+        return;
+      }
+    }
+
+    // パン開始（何も当たらなかった時だけ）
+    isPanning = true;
+    lastMX = mx;
+    lastMY = my;
+    camVelX = 0;
+    camVelY = 0;
+    return;
+  }
+
+  // ズーム画面は「タップで戻る」だけ（まずはデバッグ用）
+  if (displayMode === 1) {
+    displayMode = 0;
+    zoomProgress = 0;
+    selectedBubble = null;
+    return;
+  }
+  // --------- mode 1/2/3 navigation（仮） ---------
 if (displayMode === 1) {
   // 画面左上タップで戻る
   if (mx < 140 && my < 120) {
@@ -1200,35 +1230,6 @@ if (displayMode === 3) {
   }
   return;
 }
-
-    // バブルクリック
-    for (const b of bubbles) {
-      if (b.isClicked(mx, my)) {
-        if (seBubble) seBubble.play();
-        selectedBubble = b;
-        displayMode = 1;
-        zoomProgress = 0;
-        isPanning = false;
-        return;
-      }
-    }
-
-    // パン開始（何も当たらなかった時だけ）
-    isPanning = true;
-    lastMX = mx;
-    lastMY = my;
-    camVelX = 0;
-    camVelY = 0;
-    return;
-  }
-
-  // ズーム画面は「タップで戻る」だけ（まずはデバッグ用）
-  if (displayMode === 1) {
-    displayMode = 0;
-    zoomProgress = 0;
-    selectedBubble = null;
-    return;
-  }
 }
 
 
