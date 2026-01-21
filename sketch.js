@@ -968,35 +968,35 @@ function drawMessageScreen() {
 // そのまま関数としてJSに移せばOKです（記法だけJava→JSに直す）。
 
 function drawZoomedBubble() {
-  // ここは displayMode==1 の画面。必ず何か描く。
-  // WEBGL座標が崩れても描けるように、毎回リセットして2D化する
+  // 2Dで確実に描く
   resetMatrix();
   translate(-width / 2, -height / 2);
   blendMode(BLEND);
   noTint();
 
-  // 背景
   background(8, 10, 18);
   drawScanlines(10);
   hudCorners(18, 120);
 
-  // 安全確認：選択バブルが無いならメッセージを出して戻す
+  // デバッグ用の確定表示
+  fill(255);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(28);
+  text("SCREEN 1: RECORD SELECT", width / 2, 90);
+
+  // 選択バブルが無いなら戻す
   if (!selectedBubble) {
-    fill(255);
-    noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(18);
-    text("ERROR: selectedBubble is null", width / 2, height / 2);
-    // Hubへ戻す（無限ループ防止）
+    textSize(16);
+    text("selectedBubble is null -> back to HUB", width / 2, height / 2);
     displayMode = 0;
     return;
   }
 
-  // ここから “拡大中” の表現（とりあえず中央に円を出す）
+  // とりあえず中央に円
   const t = easeInOutCubic(constrain(zoomProgress, 0, 1));
-  const r = lerp(60, min(width, height) * 0.28, t);
+  const r = lerp(60, min(width, height) * 0.30, t);
 
-  // ほんのり光る円（2D）
   blendMode(ADD);
   noStroke();
   fill(120, 240, 255, 40);
@@ -1005,16 +1005,54 @@ function drawZoomedBubble() {
   circle(width / 2, height / 2, r * 2.6);
   blendMode(BLEND);
 
-  // タイトル文字（まずはネオンじゃなく “普通のtext” で出す）
+  // 次へ（仮ボタン表示）
+  textSize(16);
+  fill(200, 220, 255);
+  text("Tap center to go NEXT", width / 2, height - 80);
+  text("Tap top-left to go BACK", width / 2, height - 55);
+}
+
+function drawMusicDetail() {
+  resetMatrix();
+  translate(-width / 2, -height / 2);
+  blendMode(BLEND);
+  noTint();
+
+  background(8, 10, 18);
+  drawScanlines(10);
+  hudCorners(18, 120);
+
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
-  textSize(26);
-  text("BUBBLE SELECT", width / 2, 80);
+  textSize(28);
+  text("SCREEN 2: MUSIC DETAIL", width / 2, 90);
 
   textSize(16);
   fill(200, 220, 255);
-  text("Tap again to go back", width / 2, height - 60);
+  text("Tap center to go NEXT", width / 2, height - 80);
+  text("Tap top-left to go BACK", width / 2, height - 55);
+}
+
+function drawPhonePrompt() {
+  resetMatrix();
+  translate(-width / 2, -height / 2);
+  blendMode(BLEND);
+  noTint();
+
+  background(8, 10, 18);
+  drawScanlines(10);
+  hudCorners(18, 120);
+
+  fill(255);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(28);
+  text("SCREEN 3: PHONE PROMPT", width / 2, 90);
+
+  textSize(16);
+  fill(200, 220, 255);
+  text("Tap top-left to go BACK", width / 2, height - 55);
 }
 
 
@@ -1126,6 +1164,42 @@ function handlePress(mx, my) {
       exitToStart();
       return;
     }
+// --------- mode 1/2/3 navigation（仮） ---------
+if (displayMode === 1) {
+  // 画面左上タップで戻る
+  if (mx < 140 && my < 120) {
+    displayMode = 0;
+    zoomProgress = 0;
+    selectedBubble = null;
+    return;
+  }
+  // 画面中央タップで次へ
+  if (dist(mx, my, width/2, height/2) < 200) {
+    displayMode = 2;
+    return;
+  }
+  return;
+}
+
+if (displayMode === 2) {
+  if (mx < 140 && my < 120) {
+    displayMode = 1;
+    return;
+  }
+  if (dist(mx, my, width/2, height/2) < 200) {
+    displayMode = 3;
+    return;
+  }
+  return;
+}
+
+if (displayMode === 3) {
+  if (mx < 140 && my < 120) {
+    displayMode = 2;
+    return;
+  }
+  return;
+}
 
     // バブルクリック
     for (const b of bubbles) {
