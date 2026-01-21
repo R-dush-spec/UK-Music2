@@ -200,6 +200,16 @@ hud2d.textAlign(LEFT, TOP);
 function draw() {
   uiTime += 0.016;
   background(0);
+  
+push();
+resetMatrix();
+translate(-width/2, -height/2);
+fill(255);
+noStroke();
+textSize(16);
+textAlign(LEFT, TOP);
+text("mode=" + displayMode, 20, 50);
+pop();
 
   // まずHUD用バッファを毎フレームクリア
   if (hud2d) {
@@ -323,8 +333,7 @@ function ensureBGMLoaded() {
       bgmIdle.setVolume(0.4);
       console.log("bgmIdle loaded");
 
-      // もし開始画面(-2)にいるなら、ここで鳴らす
-      if (displayMode === -2 && (!bgmIdle.isPlaying())) {
+       {
         bgmIdle.loop();
       }
     }, (e) => console.warn("bgmIdle load failed", e));
@@ -1112,6 +1121,9 @@ function touchStarted() {
 
 function handlePress(mx, my) {
 
+  // --------------------------
+  // -2 : ECG
+  // --------------------------
   if (displayMode === -2) {
     if (seTap) seTap.play();
     if (bgmIdle && bgmIdle.isPlaying()) bgmIdle.stop();
@@ -1120,6 +1132,9 @@ function handlePress(mx, my) {
     return;
   }
 
+  // --------------------------
+  // -3 : Consent
+  // --------------------------
   if (displayMode === -3) {
     const cx = width/2;
     const cy = height/2;
@@ -1138,22 +1153,76 @@ function handlePress(mx, my) {
       if (seYes) seYes.play();
       displayMode = -1;
       introTimer = 0;
-    } else if (noHit) {
+      return;
+    }
+    if (noHit) {
       if (seNo) seNo.play();
       displayMode = -2;
       consentProgress = 0;
+      return;
     }
     return;
   }
 
+  // --------------------------
+  // -1 : Message
+  // --------------------------
   if (displayMode === -1) {
     if (seWarp) seWarp.play();
     switchBGM(bgmHub);
     displayMode = 0;
+    introTimer = 0;
     return;
   }
 
-  // ここからHub（displayMode===0）だけ
+  // --------------------------
+  // 1 : Screen1 (Zoom / Record Select)
+  // --------------------------
+  if (displayMode === 1) {
+    // 左上で戻る
+    if (mx < 140 && my < 120) {
+      displayMode = 0;
+      zoomProgress = 0;
+      selectedBubble = null;
+      return;
+    }
+    // 中央で次へ
+    if (dist(mx, my, width/2, height/2) < 200) {
+      displayMode = 2;
+      return;
+    }
+    return;
+  }
+
+  // --------------------------
+  // 2 : Screen2 (Music Detail)
+  // --------------------------
+  if (displayMode === 2) {
+    if (mx < 140 && my < 120) {
+      displayMode = 1;
+      return;
+    }
+    if (dist(mx, my, width/2, height/2) < 200) {
+      displayMode = 3;
+      return;
+    }
+    return;
+  }
+
+  // --------------------------
+  // 3 : Screen3 (Phone Prompt)
+  // --------------------------
+  if (displayMode === 3) {
+    if (mx < 140 && my < 120) {
+      displayMode = 2;
+      return;
+    }
+    return;
+  }
+
+  // --------------------------
+  // 0 : Hub
+  // --------------------------
   if (displayMode === 0) {
 
     // EXIT
@@ -1165,20 +1234,18 @@ function handlePress(mx, my) {
       return;
     }
 
-
-    // バブルクリック
+    // Bubble click -> Screen1へ
     for (const b of bubbles) {
       if (b.isClicked(mx, my)) {
         if (seBubble) seBubble.play();
         selectedBubble = b;
         displayMode = 1;
         zoomProgress = 0;
-        isPanning = false;
         return;
       }
     }
 
-    // パン開始（何も当たらなかった時だけ）
+    // pan start
     isPanning = true;
     lastMX = mx;
     lastMY = my;
@@ -1187,50 +1254,8 @@ function handlePress(mx, my) {
     return;
   }
 
-  // ズーム画面は「タップで戻る」だけ（まずはデバッグ用）
-  if (displayMode === 1) {
-    displayMode = 0;
-    zoomProgress = 0;
-    selectedBubble = null;
-    return;
-  }
-  // --------- mode 1/2/3 navigation（仮） ---------
-if (displayMode === 1) {
-  // 画面左上タップで戻る
-  if (mx < 140 && my < 120) {
-    displayMode = 0;
-    zoomProgress = 0;
-    selectedBubble = null;
-    return;
-  }
-  // 画面中央タップで次へ
-  if (dist(mx, my, width/2, height/2) < 200) {
-    displayMode = 2;
-    return;
-  }
-  return;
 }
 
-if (displayMode === 2) {
-  if (mx < 140 && my < 120) {
-    displayMode = 1;
-    return;
-  }
-  if (dist(mx, my, width/2, height/2) < 200) {
-    displayMode = 3;
-    return;
-  }
-  return;
-}
-
-if (displayMode === 3) {
-  if (mx < 140 && my < 120) {
-    displayMode = 2;
-    return;
-  }
-  return;
-}
-}
 
 
 function mouseDragged() {
